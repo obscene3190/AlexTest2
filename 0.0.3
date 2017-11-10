@@ -1,0 +1,115 @@
+#include <iostream>
+#include <sstream>
+
+using namespace std;
+
+void perestanovka(float* &array, int size) {
+	for (int i = 0; i < size / 2; i++) {
+		swap(array[i], array[size - i - 1]);
+	}
+}
+void write1(ostream & stream, float* array, int size) {
+	for (int i = 0; i < size; i++) {
+		stream << array[i] << ' ';
+	}
+}
+
+void sdvig(float* &array, int size, int a) {
+	perestanovka(array, size - a);
+	perestanovka(array, size);
+	perestanovka(array, a);
+}
+
+bool read(float **matrix, unsigned int rows, unsigned int columns)
+{
+	bool result = true;
+	string string;
+	for (unsigned int i = 0; i < rows; ++i) {
+		matrix[i] = new float[columns];
+		getline(cin, string);
+		istringstream stream(string);
+		for (unsigned int j = 0; j < columns; j++) {
+			if (!(stream >> matrix[i][j])) {
+				result = false;
+				break;
+			}
+		}
+	}
+	return result;
+}
+
+void write(float **matrix, unsigned int rows, unsigned int columns) {
+	for (unsigned int i = 0; i < rows; i++) {
+		for (unsigned int j = 0; j < columns; j++) {
+			cout << matrix[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void rowcol(unsigned int &rows, unsigned int &columns) {
+	char zap;
+	string string;
+	getline(cin, string);
+	istringstream stream(string);
+	if (!(stream >> rows && stream >> zap && zap == ',' && stream >> columns)) {
+		cout << "An error has occurred while reading input data" << endl;
+		exit(0);
+	}
+}
+
+void sdvigmatrix(float ** &matrix, unsigned int rows, unsigned int columns, int m) {
+	unsigned int a = (rows + columns) * 2 - 4;
+	float *array = new float[a];
+	int plus = 0;
+	for (unsigned int i = 0; i < columns; i++) {
+		array[plus] = matrix[0][i];
+		plus++;
+	}
+	for (unsigned int i = 1; i < rows - 1; i++) {
+		array[plus] = matrix[i][columns - 1];
+		plus++;
+	}
+	for (int i = columns-1; i > -1; i--) {
+		array[plus] = matrix[rows-1][i];
+		plus++;
+	}
+	for (unsigned int i = rows-2; i > 0; i--) {
+		array[plus] = matrix[i][0];
+		plus++;
+	}
+	sdvig(array, a, m);
+	plus = 0;
+	for (unsigned int i = 0; i < columns; i++) {
+		matrix[0][i] = array[plus];
+		plus++;
+	}
+	for (unsigned int i = 1; i < rows - 1; i++) {
+		matrix[i][columns - 1] = array[plus];
+		plus++;
+	}
+	for (int i = columns - 1; i > -1; i--) {
+		matrix[rows - 1][i] = array[plus];
+		plus++;
+	}
+	for (unsigned int i = rows - 2; i > 0; i--) {
+		matrix[i][0] = array[plus];
+		plus++;
+	}
+}
+
+int main() {
+	unsigned int rows = 0, columns = 0, m;
+	rowcol(rows, columns);
+	float ** matrix = new float *[rows];
+	if (read(matrix, rows, columns)) {
+		if (!(cin >> m) || m < 1) {
+			cout << "An error has occured while reading numbers from line";
+			return -1;
+		}
+		cin.get();
+		sdvigmatrix(matrix, rows, columns, m);
+		write(matrix, rows, columns);	
+	}
+	else cout << "An error has occured while reading input data";
+}
