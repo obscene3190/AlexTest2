@@ -10,24 +10,16 @@ void perestanovka(double* &array, int size) {
     }
 }
 
+void write(ostream & stream,double* array, int size) {
+    for (int i = 0; i < size; i++) {
+        stream << array[i] << ' ';
+    }
+}
+
 void sdvig(double* &array, int size, int a) {
-    double *array1 = new double [size-a];
-    double *array2 = new double [a];
-    for(int i = 0; i < size-a; i++) {
-        array1[i]=array[i];
-    }
-    for(int i = 0; i < a; i++) {
-        array2[i]=array[a + i];
-    }
-    perestanovka(array1, size-a);
-    perestanovka(array2, a);
-    for(int i = 0; i < size-a; i++) {
-        array[i]=array1[i];
-    }
-    for(int i = 0; i < a; i++) {
-        array[a + i] = array2[i];
-    }
-    perestanovka(array, size);
+    perestanovka(array, size-a); // реверсируем первые size - a элементов по первому действию алгоритма задания, то есть по сути переставляем первый подмассив
+    perestanovka(array, size); // реверсируем все элементы массива, чтобы на первое место встал второй подмассим из а элементов
+    perestanovka(array, a); // реверсируем второй подмассив, получаем результат
 }
 
 bool read (istream & stream, double* &array, int size) {
@@ -45,11 +37,7 @@ bool read (istream & stream, double* &array, int size) {
     return res;
 }
 
-void write(ostream & stream,double* array, int size) {
-    for (int i = 0; i < size; i++) {
-        stream << array[i] << ' ';
-    }
-}
+
 
 int main() {
     int size, a;
