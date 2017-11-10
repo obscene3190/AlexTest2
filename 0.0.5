@@ -1,0 +1,157 @@
+#include <iostream>
+#include <sstream>
+
+using namespace std;
+
+void perestanovka(float* &array, int size) {
+	for (int i = 0; i < size / 2; i++) {
+		swap(array[i], array[size - i - 1]);
+	}
+}
+void write1(ostream & stream, float* array, int size) {
+	for (int i = 0; i < size; i++) {
+		stream << array[i] << ' ';
+	}
+}
+
+bool read(int **matrix, unsigned int rows, unsigned int columns)
+{
+	bool result = true;
+	string string;
+	for (unsigned int i = 0; i < rows; ++i) {
+		matrix[i] = new int[columns];
+		getline(cin, string);
+		istringstream stream(string);
+		for (unsigned int j = 0; j < columns; j++) {
+			if (!(stream >> matrix[i][j])) {
+				result = false;
+				break;
+			}
+		}
+	}
+	return result;
+}
+
+void sdvig(float* &array, int size, int a) {
+	perestanovka(array, size - a);
+	perestanovka(array, size);
+	perestanovka(array, a);
+}
+
+
+void write(int **matrix, unsigned int rows, unsigned int columns) {
+	for (unsigned int i = 0; i < rows; i++) {
+		for (unsigned int j = 0; j < columns; j++) {
+			cout << matrix[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void rowcol(unsigned int &rows, unsigned int &columns) {
+	char zap;
+	string string;
+	getline(cin, string);
+	istringstream stream(string);
+	if (!(stream >> rows && stream >> zap && zap == ',' && stream >> columns)) {
+		cout << "An error has occurred while reading input data" << endl;
+		exit(0);
+	}
+}
+
+void spiralsdvig(int ** &matrix, unsigned int rows, unsigned int columns, int sd) {
+	unsigned int k = 1;
+	int m = 0, n = 0, plus;
+	int r = rows;
+	int c = columns;
+	while (k < rows * columns + 1) {
+		int a = (2 * r + 2 * (c - 2)); //формула, по которой мы определяем кол-во элементов массива с каждой внешней спиралью.
+		if (a <= 0) break;
+		float *array = new float[a];
+		plus = 0;
+		// использвуя похожий принцип считывания каждой внешней спирали записываем ее в одномерный массив
+		for (int j = n; j < columns - n; j++) {
+			if (k > rows * columns) {
+				break;
+			}
+			else {
+				array[plus] = matrix[m][j];
+				plus++;
+				k++;
+			}
+		}
+		for (int i = m + 1; i < rows - m; i++) {
+			if (k > rows * columns) {
+				break;
+			}
+			else {
+				array[plus] = matrix[i][columns - 1 - n];
+				plus++;
+				k++;
+			}
+		}
+		for (int j = columns - 2 - n; j > n - 1; j--) {
+			if (k > rows * columns) {
+				break;
+			}
+			else {
+				array[plus] = matrix[rows - 1 - m][j];
+				plus++;
+				k++;
+			}
+		}
+		for (int i = rows - 2 - m; i > m; i--) {
+			if (k > rows * columns) {
+				break;
+			}
+			else {
+				array[plus] = matrix[i][n];
+				plus++;
+				k++;
+			}
+		}
+		//Выполняем операции над массивом.
+		//write1(cout, array, a); cout << endl;  для самопроверки
+		sdvig(array, a, sd);
+		//write1(cout, array, a); cout << endl;  для самопроверки
+		plus = 0;
+		//Теперь необходимо записать элементы в матрицу с нужным сдвигом:
+		for (int j = n; j < columns - n; j++) {
+				matrix[m][j] = array[plus];
+				plus++;
+		}
+		for (int i = m + 1; i < rows - m; i++) {
+				matrix[i][columns - 1 - n] = array[plus];
+				plus++;
+		}
+		for (int j = columns - 2 - n; j > n - 1; j--) {		
+				matrix[rows - 1 - m][j] = array[plus];
+				plus++;
+		}
+		for (int i = rows - 2 - m; i > m; i--) {
+				matrix[i][n] = array[plus];
+				plus++;
+		}
+		n++;
+		m++;
+		r -= 2;
+		c -= 2; // Размеры следующей меньшей матрицы
+	}
+	cout << endl;
+}
+
+int main() {
+	unsigned int rows = 0, columns = 0, m;
+	rowcol(rows, columns);
+	int ** matrix = new int *[rows];
+	if (read(matrix, rows, columns)) {
+		if (!(cin >> m) || m < 1) {
+			cout << "An error has occured while reading numbers from line";
+			return -1;
+		}
+		cin.get();
+		spiralsdvig(matrix, rows, columns, m);
+		write(matrix, rows, columns);
+	}
+	else cout << "An error has occured while reading input data";
+}
