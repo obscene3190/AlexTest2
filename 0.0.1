@@ -12,11 +12,17 @@ void perestanovka(double* &array, int &size) {
 
 bool read (istream & stream, double* &array, int &size) {
     bool res = true;
+    int realsize = 0;
     for (int i=0; i < size; i++) {
         if (!(stream >> array[i])) {
             res = false;
             break;
         }
+        else realsize++;
+    }
+    if (realsize > size-1) {
+        cout << "Error";
+        exit(0);
     }
     return res;
 }
