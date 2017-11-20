@@ -154,4 +154,9 @@ int main() {
 		write(matrix, rows, columns);
 	}
 	else cout << "An error has occured while reading input data";
+	//Очистка памяти
+	for (unsigned int i = 0; i < rows; i++) {
+		delete[] matrix[i];
+	}
+	delete[] matrix;
 }
