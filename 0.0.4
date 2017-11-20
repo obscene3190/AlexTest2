@@ -94,6 +94,7 @@ int main() {
 	}
 	spiral(matrix, rows, columns);
 	write(matrix, rows, columns);
+	//Очистка памяти
 	for (unsigned int i = 0; i < rows; i++) {
 		delete[] matrix[i];
 	}
